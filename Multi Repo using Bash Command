@@ -1,0 +1,83 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+    
+     
+
+trigger: none
+
+jobs:
+ - job: build
+   displayName: NuGet Update
+   pool:
+    name: Hosted VS2017
+     
+       
+   steps: 
+   - checkout: git://srinivasanass/$(Repository1)
+   - checkout: git://srinivasanass/$(Repository2)
+   - script: dir $(Build.SourcesDirectory)
+    
+   ##Install Nukeeper Extension
+   - task: DotnetGlobalToolInstaller@0
+     displayName: 'DotNet'
+     inputs:
+       name: 'nukeeper'
+       checkLatest: true
+    
+    ##DotNet Restore
+   - task: DotNetCoreCLI@2
+     displayName: 'DotNet restore'
+     inputs:
+       Command: restore
+       projects: '**/*.csproj'
+       vstsFeed: '301d3302-d19a-4b6c-b6c9-cb22746a1e44'
+       
+    
+    ##DotNet Build
+   - task: DotNetCoreCLI@2
+     displayName: 'DotNet Build'
+     inputs:
+       Command: build
+       projects: '**/*.csproj'
+       arguments: '--no-restore'
+    
+    ##DotNet Publish
+   - task: DotNetCoreCLI@2
+     displayName: 'DotNet Publish'
+     inputs:
+       Command: publish
+       publishWebProjects: false
+       projects: '**/*.csproj'
+       arguments: '--no-restore --configuration Release --output $(Build.ArtifactStagingDirectory)'
+    
+
+   
+   ##Command Line for run NuKeeper
+   - task: CmdLine@2
+     displayName: 'NuKeeper Execution'
+     inputs:
+       script: |
+         git config --global user.name "srinitest"
+         git config --global user.email "srinivasan.a.ss@accenture.com"
+         nukeeper repo https://dev.azure.com/srinivasanass/srinivasanass/_git/$(Repository1) $(NuKeeperPAT) -a 0 -m 4 -i $(inputNuget) -n true
+         nukeeper repo https://dev.azure.com/srinivasanass/srinivasanass/_git/$(Repository2) $(NuKeeperPAT) -a 0 -m 4 -i $(inputNuget) -n true 
+  ##Remove Global User
+   - task: CmdLine@2
+     displayName: 'Remove User Details'
+     inputs:
+       script: |
+         git config --global --unset user.name
+         git config --global --unset user.email 
+         
+       
+   
+  
+
+
