@@ -1,0 +1,38 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+
+
+trigger: none
+
+
+
+
+jobs:
+ - job: build
+   displayName: NuGet Update
+   pool:
+    name: Hosted VS2017
+     
+       
+   steps: 
+   
+   - task: DotnetGlobalToolInstaller@0
+     displayName: 'DotNet'
+     inputs:
+       name: 'nukeeper'
+       checkLatest: true
+
+   
+   - task: NuKeeper@0
+     displayName: 'Nuget Update'
+     inputs:
+       arguments: '-m 3 -i $(inputNuget)'
+       version: '0.*'
+       
+   
+  
+
+
