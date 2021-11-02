@@ -20,8 +20,8 @@ jobs:
      
        
    steps: 
-   - checkout: git://srinivasanass/$(Repository1)
-   - checkout: git://srinivasanass/$(Repository2)
+   - checkout: git://projectname/$(Repository1)
+   - checkout: git://projectname/$(Repository2)
    - script: dir $(Build.SourcesDirectory)
     
    ##Install Nukeeper Extension
